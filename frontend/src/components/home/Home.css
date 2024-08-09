@@ -1,0 +1,155 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f0f2f5;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+.todo-header {
+    padding: 20px;
+    background-color: #ffffff;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.todo-title {
+    font-size: 1.5rem;
+    font-weight: bold;
+    flex: 1;
+    text-align: left;
+}
+
+.todo-header-right {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-right: 10px;
+}
+
+.todo-logout, .todo-user {
+    padding: 8px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+    background-color: #007bff;
+    color: #fff;
+    font-size: 0.9rem;
+    border: none;
+    transition: background-color 0.3s ease;
+}
+
+.todo-logout:hover, .todo-user:hover {
+    background-color: #0056b3;
+}
+
+.todo-container {
+    width: 100%;
+    max-width: 500px;
+    margin: 20px auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.todo-card {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    margin-bottom: 15px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+    position: relative;
+}
+
+.todo-card:hover {
+    transform: translateY(-5px);
+}
+
+.add-task {
+    font-size: 2rem;
+    color: #007bff;
+}
+
+.task-card {
+    font-size: 1rem;
+    color: #333;
+    min-height: 100px;
+}.modal {
+     display: flex;
+     align-items: center;
+     justify-content: center;
+     position: fixed;
+     z-index: 1;
+     left: 0;
+     top: 0;
+     width: 100%;
+     height: 100%;
+     background-color: rgba(0, 0, 0, 0.5);
+ }
+
+.modal-content {
+    background-color: #ffffff;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    width: 90%;
+    max-width: 500px;
+    position: relative;
+}
+
+.modal-input-wrapper {
+    display: flex;
+    align-items: center;
+}
+
+.modal-input-wrapper input[type="text"] {
+    flex: 1;
+    padding: 10px;
+    font-size: 1rem;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}
+
+.modal-add-task {
+    padding: 10px 15px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-left: 10px;
+}
+
+.modal-add-task:hover {
+    background-color: #0056b3;
+}
+
+.modal-close {
+    color: #aaa;
+    font-size: 1.5rem;
+    cursor: pointer;
+    transition: color 0.3s ease;
+    margin-left: 10px;
+}
+
+.modal-close:hover {
+    color: #000;
+}
+
+.task-delete-button {
+    width: 5vw;
+    height: 5vw;
+    max-width: 40px;
+    max-height: 40px;
+    cursor: pointer;
+    margin-left: 10px;
+}
