@@ -36,6 +36,8 @@ export class AuthService {
         return { user: result, token };
     }
 
+
+
     private async generateToken(user) {
         const token = await this.jwtService.signAsync(user);
         return token;

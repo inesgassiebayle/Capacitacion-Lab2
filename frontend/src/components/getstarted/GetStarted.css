@@ -1,4 +1,10 @@
-
+.getstarted-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #f0f2f5;
+}
 
 .getstarted-container {
     background-color: #ffffff;
@@ -47,6 +53,12 @@
     outline: none;
 }
 
+.forgot-password {
+    text-align: center;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+}
+
 .getstarted-button {
     width: 100%;
     padding: 0.8rem;
@@ -57,15 +69,11 @@
     font-size: 1rem;
     cursor: pointer;
     transition: background-color 0.3s ease;
+    margin-top: 1rem;
 }
 
 .getstarted-button:hover {
     background-color: #0056b3;
-}
-
-.forgot-password {
-    text-align: center;
-    margin-top: 1rem;
 }
 
 .forgot-password button {
@@ -108,3 +116,20 @@
         font-size: 0.9rem;
     }
 }
+
+.getstarted-input select {
+    width: 100%;
+    padding: 0.8rem;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 1rem;
+    box-sizing: border-box;
+    appearance: none;
+    background-color: #fff;
+}
+
+.getstarted-input select:focus {
+    border-color: #007bff;
+    outline: none;
+}
+

@@ -1,7 +1,8 @@
-import { Controller, Body, Post, UseGuards, Request } from '@nestjs/common';
+import { Controller, Body, Post, UseGuards, Request, Get } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { AuthService } from './auth.service';
 import { UserDto } from '../users/dto/user.dto';
+import { JwtAuthGuard } from './jwt-auth.guard';
 
 @Controller('auth')
 export class AuthController {
@@ -16,5 +17,15 @@ export class AuthController {
     @Post('signup')
     async signUp(@Body() user: UserDto) {
         return await this.authService.create(user);
+    }
+
+    @UseGuards(JwtAuthGuard)
+    @Get('verify')
+    verifyToken(@Request() req) {
+        const user = req.user;
+        return {
+            message: 'Token is valid',
+            user
+        };
     }
 }

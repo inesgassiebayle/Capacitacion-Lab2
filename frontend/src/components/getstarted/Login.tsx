@@ -3,6 +3,7 @@ import { useState } from "react";
 import React from "react";
 import axios, { AxiosError } from "axios";
 import './GetStarted.css'
+import withAuth from "../hoc/Authentication";
 
 const Login: React.FC = () => {
     const [username, setUsername] = useState("");
@@ -22,7 +23,7 @@ const Login: React.FC = () => {
             console.log("Inicio de sesión exitoso:", response.data.token);
 
 
-            const userData = response.data.user;  // Accede al objeto 'user'
+            const userData = response.data.user;
 
             navigate(`/home/${userData.username}`);
 
@@ -42,34 +43,37 @@ const Login: React.FC = () => {
     };
 
     return (
-        <div className="getstarted-container">
-            <div className='getstarted-header'>
-                <div className='getstarted-title'>
-                    <div className='text'>Login</div>
+        <div className="getstarted-wrapper">
+            <div className="getstarted-container">
+                <div className='getstarted-header'>
+                    <div className='getstarted-title'>
+                        <div className='text'>Login</div>
+                    </div>
                 </div>
+                <div className='getstarted-inputs'>
+                    <div className='getstarted-input'>
+                        <input type='text' placeholder='Username' value={username} onChange={(e) => {
+                            setUsername(e.target.value);
+                            setLoginError('');
+                        }}/>
+                    </div>
+                    <div className='getstarted-input'>
+                        <input type='password' placeholder='Password' value={password} onChange={(e) => {
+                            setPassword(e.target.value);
+                            setLoginError('');
+                        }} />
+                    </div>
+                    {loginError && (
+                        <div className="error-message" style={{color: 'red', textAlign: 'center'}}>{loginError}</div>
+                    )}
+                </div>
+                <div className='forgot-password'>Forgot your password? <button>Click Here!</button></div>
+                <div className='forgot-password'>Are you new here? <button onClick={() => navigate('/signup')}>Sign up</button></div>
+                <button className='getstarted-button' onClick={login}>Login</button>
             </div>
-            <div className='getstarted-inputs'>
-                <div className='getstarted-input'>
-                    <input type='text' placeholder='Username' value={username} onChange={(e) => {
-                        setUsername(e.target.value);
-                        setLoginError('');
-                    }}/>
-                </div>
-                <div className='getstarted-input'>
-                    <input type='password' placeholder='Password' value={password} onChange={(e) => {
-                        setPassword(e.target.value);
-                        setLoginError('');
-                    }} />
-                </div>
-                {loginError && (
-                    <div className="error-message" style={{color: 'red', textAlign: 'center'}}>{loginError}</div>
-                )}
-            </div>
-            <div className='forgot-password'>Forgot your password?<button>Click Here!</button></div>
-            <div className='forgot-password'>Are you new here? <button onClick={() => navigate('/signup')}>Sign up</button></div>
-            <button className='getstarted-button' onClick={login}>Login</button>
         </div>
     );
+
 };
 
 export default Login;
