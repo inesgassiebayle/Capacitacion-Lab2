@@ -82,11 +82,51 @@ body {
     height: 100px;
 }
 
+.task-content {
+    flex: 1;
+    padding-right: 10px;
+    word-wrap: break-word;
+}
+
 .task-card {
     font-size: 1rem;
     color: #333;
     min-height: 100px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    padding: 10px 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    position: relative;
+    border: 2px solid transparent;
+    transition: border-color 0.3s ease;
+}
+
+.task-card:hover {
+    border-color: #007bff;
+}
+
+.task-card input[type="text"] {
     flex: 1;
+    font-size: 1rem;
+    color: #333;
+    border: none;
+    outline: none;
+    padding: 5px;
+    background-color: transparent;
+    font-family: inherit;
+}
+
+.task-card input[type="text"]:focus {
+    outline: none;
+    border: none;
+}
+
+.task-icons {
+    display: flex;
+    gap: 10px;
 }
 
 .task-delete-button {
@@ -96,8 +136,8 @@ body {
     max-height: 40px;
     cursor: pointer;
     margin-left: 10px;
-    order: 1;
 }
+
 
 .modal {
     display: flex;

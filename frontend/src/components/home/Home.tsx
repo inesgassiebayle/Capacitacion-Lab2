@@ -3,11 +3,13 @@ import './Home.css';
 import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
 import deleteIcon from '../../assets/blue-trash-box-waste-or-delete-icon-vector.jpg';
+import modifyIcon from "../../assets/modification.png";
 import withAuth from "../hoc/Authentication";
 
 interface Task {
     id: number;
     content: string;
+    isEditing?: boolean;
 }
 
 const Home: FC = () => {
@@ -91,6 +93,15 @@ const Home: FC = () => {
         }
     };
 
+    const handleUpdateTask = async (taskId: number, content: string) => {
+        try {
+            await axios.put(`http://localhost:3000/tasks/${taskId}`, { content });
+            fetchTasks();
+        } catch (error) {
+            console.error("Error updating task:", error);
+        }
+    };
+
     const handleUpdateUser = async () => {
         try {
             await axios.put(`http://localhost:3000/user/${username}`, userDetails);
@@ -107,6 +118,20 @@ const Home: FC = () => {
             ...userDetails,
             [e.target.name]: e.target.value
         });
+    };
+
+    const handleTaskContentChange = (e: React.ChangeEvent<HTMLInputElement>, taskId: number) => {
+        const updatedTasks = tasks.map(task =>
+            task.id === taskId ? { ...task, content: e.target.value } : task
+        );
+        setTasks(updatedTasks);
+    };
+
+    const toggleEditing = (taskId: number) => {
+        const updatedTasks = tasks.map(task =>
+            task.id === taskId ? { ...task, isEditing: !task.isEditing } : task
+        );
+        setTasks(updatedTasks);
     };
 
     const openModal = () => setIsModalOpen(true);
@@ -134,13 +159,44 @@ const Home: FC = () => {
 
                 {tasks.map(task => (
                     <div key={task.id} className="todo-card task-card">
-                        {task.content}
-                        <img
-                            src={deleteIcon}
-                            alt="Delete"
-                            className="task-delete-button"
-                            onClick={() => handleDeleteTask(task.id)}
-                        />
+                        {task.isEditing ? (
+                            <input
+                                type="text"
+                                value={task.content}
+                                onChange={(e) => handleTaskContentChange(e, task.id)}
+                                onBlur={() => {
+                                    toggleEditing(task.id);
+                                    handleUpdateTask(task.id, task.content);
+                                }}
+                                onKeyPress={(e) => {
+                                    if (e.key === 'Enter') {
+                                        toggleEditing(task.id);
+                                        handleUpdateTask(task.id, task.content);
+                                    }
+                                }}
+                                autoFocus
+                            />
+                        ) : (
+                            <>
+                                <div className="task-content">
+                                    {task.content}
+                                </div>
+                                <div className="task-icons">
+                                    <img
+                                        src={modifyIcon}
+                                        alt="Modify"
+                                        className="task-delete-button"
+                                        onClick={() => toggleEditing(task.id)}
+                                    />
+                                    <img
+                                        src={deleteIcon}
+                                        alt="Delete"
+                                        className="task-delete-button"
+                                        onClick={() => handleDeleteTask(task.id)}
+                                    />
+                                </div>
+                            </>
+                        )}
                     </div>
                 ))}
 

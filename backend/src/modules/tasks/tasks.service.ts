@@ -48,4 +48,13 @@ export class TasksService {
         }
         await task.destroy();
     }
+
+    async modifyTask(id: number, content: string): Promise<void> {
+        const task = await this.taskRepository.findByPk(id);
+        if (!task) {
+            throw new NotFoundException('Task not found' + id);
+        }
+        task.content = content;
+        await task.save();
+    }
 }
