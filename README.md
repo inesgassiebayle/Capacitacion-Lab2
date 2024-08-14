@@ -1,18 +1,18 @@
-#Capacitacion Lab2 - To-Do App
+# Capacitacion Lab2 - To-Do App 
 
-##Prerequisites
+## Prerequisites
 - Docker
 - Node.js 
 - npm
 
-##Environment Setup
+## Environment Setup
 1. Clone the repository
 2. Create the .env File
    Copy the .env.sample file to .env in the backend folder:
    ```cp .env.sample .env```
 3. Edit the .env file with your database credentials:
 
-##Starting the Application
+## Starting the Application
 1. Start the database using docker
 2. Start the backend
     ```cd backend```
