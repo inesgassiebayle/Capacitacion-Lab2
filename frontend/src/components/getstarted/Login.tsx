@@ -20,7 +20,7 @@ const Login: React.FC = () => {
             });
 
             localStorage.setItem('token', response.data.token);
-            console.log("Inicio de sesión exitoso:", response.data.token);
+            console.log("Inicio de sesión exitoso :", response.data.token);
 
 
             const userData = response.data.user;
