@@ -1,14 +1,19 @@
 import { Injectable, Inject } from '@nestjs/common';
 import { User } from './user.entity';
 import { UserDto } from './dto/user.dto';
-import {USER_REPOSITORY} from '../../core/constants';
+import {TASK_REPOSITORY, USER_REPOSITORY} from '../../core/constants';
 import * as bcrypt from 'bcrypt';
 import {UserModDto} from "./dto/user.mod.dto";
+import {Task} from "../tasks/task.entity";
+import {TasksService} from "../tasks/tasks.service";
 
 @Injectable()
 export class UsersService {
 
-    constructor(@Inject(USER_REPOSITORY) private readonly userRepository: typeof User) { }
+    constructor(
+        @Inject(USER_REPOSITORY) private readonly userRepository: typeof User,
+        @Inject(TASK_REPOSITORY) private readonly taskRepository: typeof Task,
+    ) { }
 
     async create(user: UserDto): Promise<User> {
         return await this.userRepository.create<User>(user);
@@ -51,11 +56,11 @@ export class UsersService {
             throw new Error('User not found');
         }
 
+        await this.taskRepository.destroy({ where: { userId: user.id } });
 
         await user.destroy();
         return user;
     }
-
 
     private async hashPassword(password) {
         const hash = await bcrypt.hash(password, 10);
