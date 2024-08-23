@@ -1,8 +1,7 @@
-import { useNavigate } from "react-router-dom";
-import { useState } from "react";
-import React from "react";
-import axios, { AxiosError } from "axios";
-import './GetStarted.css'
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import './GetStarted.css';
+import { useAuth } from "../../hooks/useAuth";
 
 const Signup: React.FC = () => {
     const [username, setUsername] = useState("");
@@ -11,33 +10,12 @@ const Signup: React.FC = () => {
     const [firstname, setFirstname] = useState("");
     const [lastname, setLastname] = useState("");
     const [gender, setGender] = useState("");
+
+    const { signupError, signup, clearSignupError } = useAuth();
     const navigate = useNavigate();
 
-    const [signupError, setSignupError] = useState<string>('');
-
-    const signup = async () => {
-        try {
-            const response = await axios.post(`http://localhost:3000/auth/signup`, {
-                username: username,
-                email: email,
-                password: password,
-                name: firstname,
-                surname: lastname,
-                gender: gender
-            });
-
-            navigate(`/login`);
-
-        } catch (error) {
-            if (axios.isAxiosError(error)) {
-                const errorMsg = error.response?.data?.message || 'An unexpected error occurred.';
-                console.error('Error while sending request:', errorMsg);
-                setSignupError(Array.isArray(errorMsg) ? errorMsg.join(', ') : errorMsg);
-            } else {
-                console.error('An unexpected error occurred:', error);
-                setSignupError('An unexpected error occurred.');
-            }
-        }
+    const handleSignup = () => {
+        signup(username, email, password, firstname, lastname, gender);
     };
 
     return (
@@ -50,44 +28,72 @@ const Signup: React.FC = () => {
                 </div>
                 <div className='getstarted-inputs'>
                     <div className='getstarted-input'>
-                        <input type='text' placeholder='Username' value={username} onChange={(e) => {
-                            setUsername(e.target.value);
-                            setSignupError('');
-                        }}/>
+                        <input
+                            type='text'
+                            placeholder='Username'
+                            value={username}
+                            onChange={(e) => {
+                                setUsername(e.target.value);
+                                clearSignupError();
+                            }}
+                        />
                     </div>
                     <div className='getstarted-input'>
-                        <input type='email' placeholder='Email' value={email} onChange={(e) => {
-                            setEmail(e.target.value);
-                            setSignupError('');
-                        }}/>
+                        <input
+                            type='email'
+                            placeholder='Email'
+                            value={email}
+                            onChange={(e) => {
+                                setEmail(e.target.value);
+                                clearSignupError();
+                            }}
+                        />
                     </div>
                     <div className='getstarted-input'>
-                        <input type='text' placeholder='First Name' value={firstname} onChange={(e) => {
-                            setFirstname(e.target.value);
-                            setSignupError('');
-                        }}/>
+                        <input
+                            type='text'
+                            placeholder='First Name'
+                            value={firstname}
+                            onChange={(e) => {
+                                setFirstname(e.target.value);
+                                clearSignupError();
+                            }}
+                        />
                     </div>
                     <div className='getstarted-input'>
-                        <input type='text' placeholder='Last Name' value={lastname} onChange={(e) => {
-                            setLastname(e.target.value);
-                            setSignupError('');
-                        }}/>
+                        <input
+                            type='text'
+                            placeholder='Last Name'
+                            value={lastname}
+                            onChange={(e) => {
+                                setLastname(e.target.value);
+                                clearSignupError();
+                            }}
+                        />
                     </div>
                     <div className='getstarted-input'>
-                        <select value={gender} onChange={(e) => {
-                            setGender(e.target.value);
-                            setSignupError('');
-                        }}>
+                        <select
+                            value={gender}
+                            onChange={(e) => {
+                                setGender(e.target.value);
+                                clearSignupError(); // Clear error on change
+                            }}
+                        >
                             <option value="" disabled>Select Gender</option>
                             <option value="female">Female</option>
                             <option value="male">Male</option>
                         </select>
                     </div>
                     <div className='getstarted-input'>
-                        <input type='password' placeholder='Password' value={password} onChange={(e) => {
-                            setPassword(e.target.value);
-                            setSignupError('');
-                        }}/>
+                        <input
+                            type='password'
+                            placeholder='Password'
+                            value={password}
+                            onChange={(e) => {
+                                setPassword(e.target.value);
+                                clearSignupError();
+                            }}
+                        />
                     </div>
                     {signupError && (
                         <div className="error-message" style={{color: 'red', textAlign: 'center'}}>{signupError}</div>
@@ -95,7 +101,7 @@ const Signup: React.FC = () => {
                 </div>
                 <div className='forgot-password'>Forgot your password? <button>Click Here!</button></div>
                 <div className='forgot-password'>Already have an account? <button onClick={() => navigate('/login')}>Login</button></div>
-                <button className='getstarted-button' onClick={signup}>Sign Up</button>
+                <button className='getstarted-button' onClick={handleSignup}>Sign Up</button>
             </div>
         </div>
     );
