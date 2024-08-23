@@ -1,9 +1,7 @@
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import React from "react";
-import axios, { AxiosError } from "axios";
 import './GetStarted.css'
-import withAuth from "../hoc/Authentication";
 import {useAuth} from "../../hooks/useAuth";
 
 const Login: React.FC = () => {

@@ -4,19 +4,30 @@ import { useNavigate } from "react-router-dom";
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
+interface UserDetails {
+    name: string;
+    surname: string;
+    password: string;
+}
+
 export const useAuth = () => {
     const [signupError, setSignupError] = useState<string>('');
     const [loginError, setLoginError] = useState<string>('');
+    const [userDetails, setUserDetails] = useState<UserDetails>({
+        name: "",
+        surname: "",
+        password: ""
+    });
     const navigate = useNavigate();
 
     const signup = async (username: string, email: string, password: string, firstname: string, lastname: string, gender: string) => {
         const params = {
-            username: username,
-            email: email,
-            password: password,
+            username,
+            email,
+            password,
             name: firstname,
             surname: lastname,
-            gender: gender,
+            gender,
         };
 
         try {
@@ -40,14 +51,14 @@ export const useAuth = () => {
     };
 
     const login = async (username: string, password: string) => {
-        console.log({BACKEND_URL});
+        console.log({ BACKEND_URL });
         try {
             const response = await axios.post(`${BACKEND_URL}/auth/login`, {
-                username: username,
-                password: password
+                username,
+                password
             });
             localStorage.setItem('token', response.data.token);
-            console.log("Inicio de sesión exitoso :", response.data.token);
+            console.log("Login successful:", response.data.token);
             const userData = response.data.user;
             navigate(`/home/${userData.username}`);
         } catch (error) {
@@ -63,10 +74,54 @@ export const useAuth = () => {
                 setLoginError('An unexpected error occurred.');
             }
         }
-    }
+    };
 
     const clearLoginError = () => {
         setLoginError('');
+    };
+
+    const deleteUser = async (username: string | undefined) => {
+        try {
+            await axios.delete(`${BACKEND_URL}/user/${username}`);
+            localStorage.removeItem('token');
+            navigate('/login');
+        } catch (error) {
+            console.error("Error deleting user:", error);
+        }
+    };
+
+    const modifyUser = async (username: string | undefined, updatedDetails: UserDetails) => {
+        try {
+            const response = await axios.put(`${BACKEND_URL}/user/${username}`, updatedDetails);
+            console.log("User details updated:", response.data);
+            return response.data;
+        } catch (error) {
+            console.error("Error updating user details:", error);
+            throw error;
+        }
+    };
+
+    const fetchUserDetails = async (username: string | undefined) => {
+        try {
+            const response = await axios.get(`${BACKEND_URL}/user/${username}`);
+            const details: UserDetails = {
+                name: response.data.name,
+                surname: response.data.surname,
+                password: ""
+            };
+            setUserDetails(details);
+            return details;
+        } catch (error) {
+            console.error("Error fetching user details:", error);
+            throw error;
+        }
+    };
+
+    const updateUserDetails = (name: string, value: string) => {
+        setUserDetails(prevDetails => ({
+            ...prevDetails,
+            [name]: value,
+        }));
     };
 
     return {
@@ -75,6 +130,11 @@ export const useAuth = () => {
         clearSignupError,
         loginError,
         login,
-        clearLoginError
+        clearLoginError,
+        deleteUser,
+        modifyUser,
+        fetchUserDetails,
+        userDetails,
+        updateUserDetails
     };
 };

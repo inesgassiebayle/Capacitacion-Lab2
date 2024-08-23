@@ -1,34 +1,26 @@
 import React, { FC, useEffect, useState } from "react";
 import './Home.css';
-import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
 import deleteIcon from '../../assets/blue-trash-box-waste-or-delete-icon-vector.jpg';
 import modifyIcon from "../../assets/modification.png";
 import withAuth from "../hoc/Authentication";
-
-interface Task {
-    id: number;
-    content: string;
-    isEditing?: boolean;
-}
+import { useTasks } from "../../hooks/useTasks";
+import { useAuth } from "../../hooks/useAuth";
 
 const Home: FC = () => {
     const { username } = useParams<{ username: string }>();
-    const [tasks, setTasks] = useState<Task[]>([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isManageUserOpen, setIsManageUserOpen] = useState(false);
     const [newTask, setNewTask] = useState("");
-    const [userDetails, setUserDetails] = useState({
-        name: "",
-        surname: "",
-        password: ""
-    });
     const [updateMessage, setUpdateMessage] = useState<string | null>(null);
     const navigate = useNavigate();
+    const { createTask, fetchTasks, deleteTask, tasks, modifyTask, toggleTaskEditing, handleTaskContentChange } = useTasks();
+    const { deleteUser, modifyUser, userDetails, fetchUserDetails, updateUserDetails } = useAuth();
 
     useEffect(() => {
-        fetchTasks();
-        fetchUserDetails();
+        if (username) {
+            fetchTasks(username);
+        }
     }, [username]);
 
     const handleLogout = () => {
@@ -36,108 +28,37 @@ const Home: FC = () => {
         navigate('/login');
     };
 
-    const handleDelete = async () => {
-        try {
-            await axios.delete(`http://localhost:3000/user/${username}`);
-            localStorage.removeItem('token');
-            navigate('/login');
-        } catch (error) {
-            console.error("Error deleting user:", error);
-        }
-    };
-
-    const fetchTasks = async () => {
-        try {
-            const response = await axios.get<Task[]>(`http://localhost:3000/tasks/${username}`);
-            setTasks(response.data);
-        } catch (error) {
-            console.error("Error fetching tasks:", error);
-        }
-    };
-
-    const fetchUserDetails = async () => {
-        try {
-            const response = await axios.get(`http://localhost:3000/user/${username}`);
-            setUserDetails({
-                name: response.data.name,
-                surname: response.data.surname,
-                password: ""
-            });
-        } catch (error) {
-            console.error("Error fetching user details:", error);
-        }
-    };
-
     const handleDeleteTask = async (taskId: number) => {
-        try {
-            await axios.delete(`http://localhost:3000/tasks/${taskId}`);
-            fetchTasks();
-        } catch (error) {
-            console.error("Error deleting task:", error);
-        }
+        await deleteTask(taskId, username);
     };
 
     const handleCreateTask = async () => {
-        if (newTask.trim()) {
-            try {
-                await axios.post(`http://localhost:3000/tasks/create`, {
-                    content: newTask,
-                    username: username
-                });
-                setNewTask("");
-                fetchTasks();
-                closeModal();
-            } catch (error) {
-                console.error("Error creating task:", error);
-            }
-        }
-    };
-
-    const handleUpdateTask = async (taskId: number, content: string) => {
-        try {
-            await axios.put(`http://localhost:3000/tasks/${taskId}`, { content });
-            fetchTasks();
-        } catch (error) {
-            console.error("Error updating task:", error);
-        }
+        await createTask(newTask, username);
+        setNewTask("");
+        closeModal();
     };
 
     const handleUpdateUser = async () => {
-        try {
-            await axios.put(`http://localhost:3000/user/${username}`, userDetails);
-            setUpdateMessage("User details updated successfully!");
-            closeManageUser();
-        } catch (error) {
-            console.error("Error updating user details:", error);
-            setUpdateMessage("Failed to update user details.");
-        }
+        modifyUser(username, userDetails);
+        closeManageUser();
     };
+
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setUserDetails({
-            ...userDetails,
-            [e.target.name]: e.target.value
-        });
-    };
-
-    const handleTaskContentChange = (e: React.ChangeEvent<HTMLInputElement>, taskId: number) => {
-        const updatedTasks = tasks.map(task =>
-            task.id === taskId ? { ...task, content: e.target.value } : task
-        );
-        setTasks(updatedTasks);
+        updateUserDetails(e.target.name, e.target.value);
     };
 
     const toggleEditing = (taskId: number) => {
-        const updatedTasks = tasks.map(task =>
-            task.id === taskId ? { ...task, isEditing: !task.isEditing } : task
-        );
-        setTasks(updatedTasks);
+        toggleTaskEditing(taskId);
     };
 
     const openModal = () => setIsModalOpen(true);
     const closeModal = () => setIsModalOpen(false);
 
-    const openManageUser = () => setIsManageUserOpen(true);
+    const openManageUser = () => {
+        setIsManageUserOpen(true);
+        fetchUserDetails(username);
+    }
     const closeManageUser = () => {
         setIsManageUserOpen(false);
         setUpdateMessage(null);
@@ -166,12 +87,12 @@ const Home: FC = () => {
                                 onChange={(e) => handleTaskContentChange(e, task.id)}
                                 onBlur={() => {
                                     toggleEditing(task.id);
-                                    handleUpdateTask(task.id, task.content);
+                                    modifyTask(task.id, task.content, username);
                                 }}
                                 onKeyPress={(e) => {
                                     if (e.key === 'Enter') {
                                         toggleEditing(task.id);
-                                        handleUpdateTask(task.id, task.content);
+                                        modifyTask(task.id, task.content, username);
                                     }
                                 }}
                                 autoFocus
@@ -247,7 +168,7 @@ const Home: FC = () => {
                             </div>
                             <div className="modal-buttons">
                                 <button className="modal-add-task" onClick={handleUpdateUser}>Update</button>
-                                <button className="modal-delete-account" onClick={handleDelete}>Delete Account</button>
+                                <button className="modal-delete-account" onClick={() => deleteUser(username)}>Delete Account</button>
                             </div>
                             {updateMessage && <div className="update-message">{updateMessage}</div>}
                         </div>
