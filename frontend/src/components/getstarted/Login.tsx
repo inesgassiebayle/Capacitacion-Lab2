@@ -4,42 +4,18 @@ import React from "react";
 import axios, { AxiosError } from "axios";
 import './GetStarted.css'
 import withAuth from "../hoc/Authentication";
+import {useAuth} from "../../hooks/useAuth";
 
 const Login: React.FC = () => {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const navigate = useNavigate();
 
-    const [loginError, setLoginError] = useState('');
-
-    const login = async () => {
-        try {
-            const response = await axios.post(`http://localhost:3000/auth/login`, {
-                username: username,
-                password: password
-            });
-
-            localStorage.setItem('token', response.data.token);
-            console.log("Inicio de sesión exitoso :", response.data.token);
+    const { login, loginError, clearLoginError } = useAuth();
 
 
-            const userData = response.data.user;
-
-            navigate(`/home/${userData.username}`);
-
-        } catch (error) {
-            if (axios.isAxiosError(error)) {
-                const errorMsg = error.response?.data || 'An unexpected error occurred.';
-                console.error('Error while sending request:', errorMsg);
-                setLoginError('');
-                if (typeof errorMsg === 'string' && (errorMsg.includes("User does not exist") || errorMsg.includes("User not found"))) {
-                    setLoginError("User or password incorrect");
-                }
-            } else {
-                console.error('An unexpected error occurred:', error);
-                setLoginError('An unexpected error occurred.');
-            }
-        }
+    const handleLogin = async () => {
+       login(username, password);
     };
 
     return (
@@ -54,13 +30,13 @@ const Login: React.FC = () => {
                     <div className='getstarted-input'>
                         <input type='text' placeholder='Username' value={username} onChange={(e) => {
                             setUsername(e.target.value);
-                            setLoginError('');
+                            clearLoginError();
                         }}/>
                     </div>
                     <div className='getstarted-input'>
                         <input type='password' placeholder='Password' value={password} onChange={(e) => {
                             setPassword(e.target.value);
-                            setLoginError('');
+                            clearLoginError();
                         }} />
                     </div>
                     {loginError && (
@@ -69,7 +45,7 @@ const Login: React.FC = () => {
                 </div>
                 <div className='forgot-password'>Forgot your password? <button>Click Here!</button></div>
                 <div className='forgot-password'>Are you new here? <button onClick={() => navigate('/signup')}>Sign up</button></div>
-                <button className='getstarted-button' onClick={login}>Login</button>
+                <button className='getstarted-button' onClick={handleLogin}>Login</button>
             </div>
         </div>
     );
